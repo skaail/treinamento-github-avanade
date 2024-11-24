@@ -26,21 +26,32 @@ jobs:
           cd HelloWorldApi
           dotnet restore
 
-      - name: Run unit tests
+      - name: Install SonarScanner for .NET
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+
+      - name: Begin SonarQube Analysis
+        run: |
+          cd aspnet
+          dotnet sonarscanner begin /k:"skaail_treinamento-github-avanade" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /o:"skaail"
+
+      - name: Build the project
+        run: |
+          cd aspnet
+          cd HelloWorldApi
+          dotnet build --configuration Release
+
+        
+      - name: Run tests
         run: |
           cd aspnet
           cd HelloWorldAspNetCore.Tests
-          dotnet test
-
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
+          dotnet test --configuration Release --logger "trx;LogFileName=TestResults/test-coverage.xml"
+      
+      - name: End SonarQube Analysis
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"skaail_treinamento-github-avanade" /o:"skaail" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          cd aspnet
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
   build:
     uses: ./.github/workflows/reusable-workflow.yml
