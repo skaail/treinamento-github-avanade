@@ -33,7 +33,7 @@ jobs:
       - name: Begin SonarQube Analysis
         run: |
           cd aspnet
-          # Iniciar a análise com a solução (substitua 'HelloWorldApi.sln' pelo seu arquivo de solução)
+          cd HelloWorldApi
           dotnet sonarscanner begin /k:"skaail_treinamento-github-avanade" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /o:"skaail" /d:sonar.cs.opencover.reportsPaths="TestResults/test-coverage.xml"
 
       - name: Build the project
