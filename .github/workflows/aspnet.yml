@@ -28,12 +28,12 @@ jobs:
 
       - name: Install SonarScanner
         run: |
-            dotnet tool install --global sonar-scanner
+            dotnet tool install --global dotnet-sonarscanner
 
       - name: Begin SonarQube Analysis
         run: |
           cd aspnet
-          sonar-scanner begin /k:"skaail_treinamento-github-avanade" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"  
+          dotnet sonarscanner begin /k:"skaail_treinamento-github-avanade" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"  
 
       - name: Build the project
         run: |
@@ -49,7 +49,7 @@ jobs:
 
       - name: End SonarQube Analysis
         run: |
-          sonar-scanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
 
   build:
