@@ -52,17 +52,12 @@ jobs:
         run: |
           cd aspnet/HelloWorldAspNetCore.Tests
           dotnet add package coverlet.collector
-          dotnet test --configuration Release --collect:"XPlat Code Coverage" --results-directory "TestResults"
+          dotnet test --configuration Release --collect:"XPlat Code Coverage" --results-directory "TestResults" /p:CoverletOutputFormat=cobertura
 
       - name: Debug Test Results
         run: |
           ls -R aspnet/HelloWorldAspNetCore.Tests/TestResults
 
-      - name: Convert Coverage Report
-        run: |
-          reportgenerator -reports:"aspnet/HelloWorldAspNetCore.Tests/TestResults/**/coverage.cobertura.xml" \
-                          -targetdir:"aspnet/HelloWorldAspNetCore.Tests/TestResults/Coverage" \
-                          -reporttypes:SonarQube
 
       - name: End SonarQube Analysis
         run: |
