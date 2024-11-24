@@ -26,6 +26,10 @@ jobs:
           cd HelloWorldApi
           dotnet restore
 
+      - name: Install SonarScanner
+        run: |
+            dotnet tool install --global dotnet-sonarscanner
+
       - name: Begin SonarQube Analysis
         run: |
           cd aspnet
