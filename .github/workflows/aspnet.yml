@@ -40,7 +40,7 @@ jobs:
         run: |
           cd aspnet
           cd HelloWorldApi
-          dotnet build HelloWorldApi.sln --configuration Release
+          dotnet build --configuration Release
 
       - name: Run tests
         run: |
