@@ -31,7 +31,7 @@ jobs:
         run: |
           cd php
           # Dependendo de como os testes estão configurados, o comando pode ser algo como:
-          vendor/bin/phpunit tests --coverage-clover=coverage.xml
+          vendor/bin/phpunit tests --coverage-clover coverage.xml
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
