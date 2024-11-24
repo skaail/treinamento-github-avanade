@@ -51,6 +51,7 @@ jobs:
       - name: End SonarQube Analysis
         run: |
           cd aspnet
+          cd HelloWorldApi
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
   build:
