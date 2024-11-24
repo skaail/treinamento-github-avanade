@@ -13,6 +13,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>17</maven.compiler.release>
+    <sonar.organization>skaail</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
 
   <dependencyManagement>
@@ -52,7 +54,7 @@
         </configuration>
       </plugin>
 
-      
+
       <!-- exec-maven-plugin to run the main class -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
