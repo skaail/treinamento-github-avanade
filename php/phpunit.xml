@@ -1,23 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.0/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
-         colors="true">
-  
-  <!-- Configuração dos diretórios -->
-  <testsuites>
-    <testsuite name="Default">
-      <directory>tests</directory> <!-- Caminho para os testes -->
-    </testsuite>
-  </testsuites>
+<phpunit>
 
-  <!-- Configuração de cobertura de código -->
-  <coverage>
-    <include>
-      <directory suffix=".php">src</directory> <!-- Caminho do código-fonte -->
-    </include>
-    <report>
-      <clover outputFile="coverage.xml" />
-    </report>
-  </coverage>
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+        <report>
+            <clover outputFile=".report/clover.xml" />
+        </report>
+    </coverage>
+
 </phpunit>
