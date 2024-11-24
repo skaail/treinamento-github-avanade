@@ -31,18 +31,17 @@ jobs:
 
       - name: Install ReportGenerator
         run: |
-          dotnet tool install --global dotnet-reportgenerator-globaltool
+          dotnet tool install --global dotnet-coverage
 
       - name: Begin SonarQube Analysis
         run: |
           cd aspnet/HelloWorldApi
           dotnet sonarscanner begin \
-            /k:"skaail_treinamento-github-avanade" \
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /k:"skaail_treinamento-github-avanade"
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
             /d:sonar.host.url="https://sonarcloud.io" \
             /o:"skaail" \
-          dotnet build --no-incremental
-          
+            /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
 
       - name: Build the project
         run: |
@@ -52,8 +51,10 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd aspnet/HelloWorldAspNetCore.Tests
-          dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
-          dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+            dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
+            dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+
       - name: Debug Test Results
         run: |
           ls -R aspnet/HelloWorldAspNetCore.Tests/TestResults
