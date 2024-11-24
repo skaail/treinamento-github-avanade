@@ -22,36 +22,46 @@ jobs:
 
       - name: Restore dependencies
         run: |
-          cd aspnet
-          cd HelloWorldApi
+          cd aspnet/HelloWorldApi
           dotnet restore
 
       - name: Install SonarScanner for .NET
         run: |
           dotnet tool install --global dotnet-sonarscanner
 
+      - name: Install ReportGenerator
+        run: |
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+
       - name: Begin SonarQube Analysis
         run: |
-          cd aspnet
-          cd HelloWorldApi
-          dotnet sonarscanner begin /k:"skaail_treinamento-github-avanade" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /o:"skaail" /d:sonar.cs.opencover.reportsPaths="TestResults/test-coverage.xml"
+          cd aspnet/HelloWorldApi
+          dotnet sonarscanner begin \
+            /k:"skaail_treinamento-github-avanade" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /o:"skaail" \
+            /d:sonar.cs.opencover.reportsPaths="TestResults/Coverage/SonarQube.xml"
 
       - name: Build the project
         run: |
-          cd aspnet
-          cd HelloWorldApi
+          cd aspnet/HelloWorldApi
           dotnet build --configuration Release
 
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
-          cd aspnet
-          cd HelloWorldAspNetCore.Tests
-          dotnet test --configuration Release --logger "trx;LogFileName=TestResults/test-coverage.xml"
+          cd aspnet/HelloWorldAspNetCore.Tests
+          dotnet test --configuration Release --collect:"XPlat Code Coverage" --results-directory "TestResults"
+
+      - name: Convert Coverage Report
+        run: |
+          reportgenerator -reports:"aspnet/HelloWorldAspNetCore.Tests/TestResults/**/coverage.cobertura.xml" \
+                          -targetdir:"aspnet/HelloWorldAspNetCore.Tests/TestResults/Coverage" \
+                          -reporttypes:SonarQube
 
       - name: End SonarQube Analysis
         run: |
-          cd aspnet
-          cd HelloWorldApi
+          cd aspnet/HelloWorldApi
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
   build:
