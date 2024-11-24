@@ -51,6 +51,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd aspnet/HelloWorldAspNetCore.Tests
+          dotnet add package coverlet.collector
           dotnet test --configuration Release --collect:"XPlat Code Coverage" --results-directory "TestResults"
 
       - name: Debug Test Results
