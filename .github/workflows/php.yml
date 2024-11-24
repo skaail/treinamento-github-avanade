@@ -31,6 +31,15 @@ jobs:
           # Dependendo de como os testes estão configurados, o comando pode ser algo como:
           vendor/bin/phpunit tests
 
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.projectBaseDir=php
+        env:
+          SONAR_TOKEN: ${{ secrets. SONAR_TOKEN }}
+    
+
   build:
     uses: ./.github/workflows/reusable-workflow.yml
     with:
