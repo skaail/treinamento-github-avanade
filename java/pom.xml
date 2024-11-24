@@ -13,10 +13,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>17</maven.compiler.release>
-    <sonar.organization>skaail</sonar.organization>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
   <dependencyManagement>
@@ -56,31 +52,28 @@
         </configuration>
       </plugin>
 
-<plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-surefire-plugin</artifactId>
-      <version>2.22.2</version>
-      <configuration>
-        <includes>
-          <include>**/*Test.java</include>
-        </includes>
-      </configuration>
-    </plugin>
+      <!-- JaCoCo Plugin para gerar o relatório de cobertura -->
     <plugin>
       <groupId>org.jacoco</groupId>
       <artifactId>jacoco-maven-plugin</artifactId>
       <version>0.8.7</version>
       <executions>
         <execution>
-          <phase>prepare-package</phase>
+          <id>prepare-agent</id> <!-- Id único para a execução do JaCoCo -->
+          <phase>test</phase> <!-- Executa durante a fase de testes -->
           <goals>
             <goal>prepare-agent</goal>
+          </goals>
+        </execution>
+        <execution>
+          <id>report</id> <!-- Id único para a execução do relatório -->
+          <phase>verify</phase> <!-- Gera o relatório após os testes -->
+          <goals>
             <goal>report</goal>
           </goals>
         </execution>
       </executions>
     </plugin>
-
 
       <!-- exec-maven-plugin to run the main class -->
       <plugin>
