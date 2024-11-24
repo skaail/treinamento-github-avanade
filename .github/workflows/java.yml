@@ -54,6 +54,8 @@ jobs:
           cd java
           mvn clean verify sonar:sonar \
             -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.organization=skaail
+            -Dsonar.projectKey=skaail_treinamento-github-avanade
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
   build:
