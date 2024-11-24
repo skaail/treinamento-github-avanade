@@ -52,7 +52,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
         run: |
           cd java
-          run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=skaail_treinamento-github-avanade
+          mvn clean verify sonar:sonar -Dsonar.projectKey=skaail_treinamento-github-avanade
 
   build:
     uses: ./.github/workflows/reusable-workflow.yml
