@@ -33,21 +33,21 @@ jobs:
       - name: Begin SonarQube Analysis
         run: |
           cd aspnet
-          dotnet sonarscanner begin /k:"skaail_treinamento-github-avanade" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /o:"skaail"
+          # Iniciar a análise com a solução (substitua 'HelloWorldApi.sln' pelo seu arquivo de solução)
+          dotnet sonarscanner begin /k:"skaail_treinamento-github-avanade" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /o:"skaail" /d:sonar.cs.opencover.reportsPaths="TestResults/test-coverage.xml"
 
       - name: Build the project
         run: |
           cd aspnet
           cd HelloWorldApi
-          dotnet build --configuration Release
+          dotnet build HelloWorldApi.sln --configuration Release
 
-        
       - name: Run tests
         run: |
           cd aspnet
           cd HelloWorldAspNetCore.Tests
           dotnet test --configuration Release --logger "trx;LogFileName=TestResults/test-coverage.xml"
-      
+
       - name: End SonarQube Analysis
         run: |
           cd aspnet
