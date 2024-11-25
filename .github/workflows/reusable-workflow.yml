@@ -6,6 +6,11 @@ on:
       language:
         required: true
         type: string
+      RENDER_DEPLOY_HOOK_URL:
+        description: 'DEPLOY HOOK'
+        required: true
+        type: string
+        
 
 jobs:
   build:
@@ -29,10 +34,10 @@ jobs:
       - name: Deploy
         if: ${{ inputs.language == 'node' }}
         env:
-          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          deploy_url: ${{ inputs.RENDER_DEPLOY_HOOK_URL }}
 
         run: |
-            echo $deploy_url
+            echo "$deploy_url"
 
       - name: Set up PHP
         if: ${{ inputs.language == 'php' }}
