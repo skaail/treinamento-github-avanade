@@ -78,6 +78,9 @@ jobs:
   label-and-notify:
     needs: [java, node, php, aspnet]
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
     steps:
       - name: Add Ready for Review Label
         uses: actions-ecosystem/action-add-labels@v1
