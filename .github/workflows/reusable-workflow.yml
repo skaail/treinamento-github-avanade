@@ -26,6 +26,13 @@ jobs:
           cd nodejs
           npm install
 
+      - name: Deploy
+        if: ${{ inputs.language == 'node' }}
+        env:
+          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+            curl "$deploy_url"
+
       - name: Set up PHP
         if: ${{ inputs.language == 'php' }}
         uses: shivammathur/setup-php@v2
