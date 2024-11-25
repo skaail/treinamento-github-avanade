@@ -1,7 +1,7 @@
 on:
     pull_request:
     push:
-      branches: [dev]
+      branches: [main]
   
 jobs:
     ci:
