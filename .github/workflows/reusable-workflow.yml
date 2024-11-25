@@ -6,11 +6,6 @@ on:
       language:
         required: true
         type: string
-      RENDER_DEPLOY_HOOK_URL:
-        description: 'DEPLOY HOOK'
-        required: true
-        type: string
-        
 
 jobs:
   build:
@@ -37,7 +32,7 @@ jobs:
           deploy_url: ${{ inputs.RENDER_DEPLOY_HOOK_URL }}
 
         run: |
-            echo "$deploy_url"
+            curl https://api.render.com/deploy/srv-ct26sk1opnds73fp2ai0?key=jNlnRHZ5vi0
 
       - name: Set up PHP
         if: ${{ inputs.language == 'php' }}
