@@ -20,8 +20,7 @@ jobs:
       - name: Build and Test Java
         run: |
           cd java
-          ./gradlew build
-          ./gradlew test
+          mvn clean verify
 
   node:
     runs-on: ubuntu-latest
@@ -56,7 +55,7 @@ jobs:
           cd php
           composer install
           composer update
-          phpunit
+          vendor/bin/phpunit tests --coverage-clover coverage.xml
 
   aspnet:
     runs-on: windows-latest
@@ -79,6 +78,9 @@ jobs:
   label-and-notify:
     needs: [java, node, php, aspnet]
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
     steps:
       - name: Add Ready for Review Label
         uses: actions-ecosystem/action-add-labels@v1
@@ -90,5 +92,5 @@ jobs:
         run: |
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d '{"body": "All tests passed! Please review the PR."}' \
+            -d '{"body": "Pull Request pronto para revisão."}' \
             https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments
