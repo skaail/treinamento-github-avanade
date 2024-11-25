@@ -1,0 +1,49 @@
+name: Node.js CI
+
+on:
+  push:
+    paths:
+      - 'nodejs/**'
+  pull_request:
+    paths:
+      - 'nodejs/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '23'
+
+      - name: Install dependencies
+        run: |
+          cd nodejs
+          npm install
+
+      - name: Run unit tests
+        run: |
+          cd nodejs
+          npm test
+
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.projectBaseDir=nodejs
+        env:
+          SONAR_TOKEN: ${{ secrets. SONAR_TOKEN }}
+  
+
+
+
+  build:
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      language: 'node'
+

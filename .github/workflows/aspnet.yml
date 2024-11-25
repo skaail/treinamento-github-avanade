@@ -1,0 +1,61 @@
+name: ASP.NET CI
+
+on:
+  push:
+    paths:
+      - 'aspnet/**'
+  pull_request:
+    paths:
+      - 'aspnet/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0'
+
+      - name: Restore dependencies
+        run: |
+          cd aspnet/HelloWorldApi
+          dotnet restore
+      - name: Install SonarScanner for .NET
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+      - name: Install ReportGenerator
+        run: |
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+      - name: Begin SonarQube Analysis
+        run: |
+          cd aspnet/HelloWorldApi
+          dotnet sonarscanner begin \
+            /k:"skaail_treinamento-github-avanade" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /o:"skaail" \
+            /d:sonar.cs.opencover.reportsPaths="aspnet/HelloWorldAspNetCore.Tests/TestResults/**/coverage.cobertura.xml"
+      - name: Build the project
+        run: |
+          cd aspnet/HelloWorldApi
+          dotnet build --configuration Release
+      - name: Run tests with coverage
+        run: |
+          cd aspnet/HelloWorldAspNetCore.Tests
+          dotnet add package coverlet.collector
+          dotnet test --configuration Release --collect:"XPlat Code Coverage" --results-directory "TestResults" /p:CoverletOutputFormat=cobertura
+      - name: Debug Test Results
+        run: |
+          ls -R aspnet/HelloWorldAspNetCore.Tests/TestResults
+      - name: End SonarQube Analysis
+        run: |
+          cd aspnet/HelloWorldApi
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+  build:
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      language: 'aspnet'

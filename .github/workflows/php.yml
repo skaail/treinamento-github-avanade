@@ -1,0 +1,48 @@
+name: PHP CI
+
+on:
+  push:
+    paths:
+      - 'php/**'
+  pull_request:
+    paths:
+      - 'php/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: xdebug
+          coverage: xdebug
+
+      - name: Install dependencies
+        run: |
+          cd php
+          composer install
+
+      - name: Run unit tests
+        run: |
+          cd php
+          # Dependendo de como os testes estão configurados, o comando pode ser algo como:
+          vendor/bin/phpunit tests --coverage-clover coverage.xml
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.projectBaseDir=php
+        env:
+          SONAR_TOKEN: ${{ secrets. SONAR_TOKEN }}
+    
+
+  build:
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      language: 'php'

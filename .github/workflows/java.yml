@@ -1,0 +1,61 @@
+name: Java CI
+
+on:
+  push:
+    paths:
+      - 'java/**'
+  pull_request:
+    paths:
+      - 'java/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build and run unit tests
+        run: |
+          cd java
+          mvn clean verify
+
+  sonar:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache SonarQube dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-sonar-
+
+      - name: Run SonarQube analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  
+        run: |
+          cd java
+          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -P coverage -Dsonar.projectKey=skaail_treinamento-github-avanade  -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml -Dsonar.projectBaseDir=java
+
+
+  build:
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      language: 'java'

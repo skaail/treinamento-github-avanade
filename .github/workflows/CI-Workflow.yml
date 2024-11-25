@@ -1,0 +1,96 @@
+name: CI Workflow
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  java:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build and Test Java
+        run: |
+          cd java
+          mvn clean verify
+
+  node:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '23'
+
+      - name: Install and Test Node.js
+        run: |
+          cd nodejs
+          npm install
+          npm test
+
+  php:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Install and Test PHP
+        run: |
+          cd php
+          composer install
+          composer update
+          vendor/bin/phpunit tests --coverage-clover coverage.xml
+
+  aspnet:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0'
+
+      - name: Build and Test ASP.NET
+        run: |
+          cd aspnet
+          cd HelloWorldApi
+          dotnet build
+          dotnet test
+
+  label-and-notify:
+    needs: [java, node, php, aspnet]
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Add Ready for Review Label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: 'Ready for Review'
+
+      - name: Notify Reviewers
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{"body": "Pull Request pronto para revisão."}' \
+            https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments
