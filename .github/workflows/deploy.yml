@@ -1,21 +1,24 @@
 on:
-    pull_request:
-    push:
-      branches: [main]
+  pull_request_review:
+    types: [submitted]
+
   
+
 jobs:
-    ci:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - name: Test
-          run: |
-            cd nodejs
-            npm install
-            npm run test
-  
-        - name: Deploy
-          env:
-            deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-          run: |
-            curl "$deploy_url"
+  ci:
+    if: github.event.review.state == 'approved'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Test
+        run: |
+          cd nodejs
+          npm install
+          npm run test
+
+      - name: Deploy
+        
+        env:
+          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          curl "$deploy_url"
